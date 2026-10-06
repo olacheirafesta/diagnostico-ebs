@@ -27,9 +27,9 @@ button{font:inherit;background:var(--preto);color:#fff;border:0;border-radius:6p
 #res{display:none}
 </style></head><body><div class="w">
 <img class="mono" src="mono.png" alt="Event Business School">
-<div class="k" style="margin-top:22px">Mentoria · Diagnóstico</div>
+<div id="intro"><div class="k" style="margin-top:22px">Mentoria · Diagnóstico</div>
 <h1>Onde estás a <em>perder clientes</em>?</h1>
-<p>Responde com os números dos <b>últimos 3 meses</b> e com o que fazes na prática. No fim vês onde está o teu bloqueio, as ações para esta semana e onde está a aula da EBS que explica cada uma.</p>
+<p>Responde com os números dos <b>últimos 3 meses</b> e com o que fazes na prática. No fim vês onde está o teu bloqueio, as ações para esta semana e onde está a aula da EBS que explica cada uma.</p></div>
 
 <form id="f">
 <h2>Quem és</h2>
@@ -126,7 +126,7 @@ function mostra(d,r,enviado){
  ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
  <h3>As tuas ações para esta semana</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
  <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
- document.getElementById('f').style.display='none';el.style.display='block';window.scrollTo(0,0);
+ document.getElementById('f').style.display='none';document.getElementById('intro').style.display='none';el.style.display='block';window.scrollTo(0,0);
 }
 document.getElementById('f').addEventListener('submit',async e=>{
  e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());const r=calcula(d);
