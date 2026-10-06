@@ -25,26 +25,25 @@ button{font:inherit;background:var(--preto);color:#fff;border:0;border-radius:6p
 .ac{border-bottom:1px solid var(--linha);padding:14px 0}.ac b{font-weight:500}.ac a{color:var(--preto)}
 .tx{font-size:15px;color:var(--cinza)}
 #res{display:none}
+#prog{height:4px;background:#EFEDEA;border-radius:2px;margin:18px 0 0;overflow:hidden}#prog i{display:block;height:100%;width:0;background:var(--preto);transition:width .3s}
+.card{display:none;min-height:62vh;flex-direction:column;justify-content:center;padding:30px 0}
+.card.on{display:flex;animation:sobe .35s ease}
+@keyframes sobe{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.card .lb{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--cinza);margin-bottom:14px}
+.card .pq{font-family:"Playfair Display",serif;font-size:28px;line-height:1.3;margin:0 0 22px}
+.card input[type=number],.card input[type=text],.card input[type=email]{font-size:22px;border:0;border-bottom:2px solid var(--linha);border-radius:0;padding:10px 0;outline:none}
+.card input:focus{border-bottom-color:var(--preto)}
+.card .op{flex-direction:column}.card .op label{text-align:left;padding:14px 16px;font-size:17px}
+.nav{display:flex;gap:14px;align-items:center;margin-top:26px}.nav button{width:auto;margin:0;padding:13px 26px}.nav .vt{background:none;color:var(--cinza);padding:13px 0}
+.nav small{color:var(--cinza)}
+.err{color:#8A1C2B;font-size:14px;margin-top:10px;display:none}
+
 .dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:10px;vertical-align:middle}.dot.big{width:22px;height:22px;margin-right:14px}
 .bar .b{height:14px}
 </style></head><body><div class="w">
-<img class="mono" src="mono.png" alt="Event Business School">
-<div id="intro"><div class="k" style="margin-top:22px">Mentoria · Diagnóstico</div>
-<h1>Onde estás a <em>perder clientes</em>?</h1>
-<p>Responde com os números dos <b>últimos 3 meses</b> e com o que fazes na prática. No fim vês onde está o teu bloqueio, as ações para esta semana e onde está a aula da EBS que explica cada uma.</p></div>
-
-<form id="f">
-<h2>Quem és</h2>
-<label class="n">O teu nome</label><input type="text" name="nome" required>
-<label class="n">O teu email (recebes lá o resultado)</label><input type="email" name="email" required>
-
-<h2>Os teus números</h2><p class="nota">Últimos 3 meses. Se não sabes ao certo, escreve o valor mais próximo.</p>
-<div id="nums"></div>
-
-<div id="blocos"></div>
-<button type="submit">Ver o meu diagnóstico</button>
-</form>
-
+<img class="mono" id="mono" src="mono.png" alt="Event Business School">
+<div id="prog"><i></i></div>
+<form id="f" novalidate><div id="cards"></div></form>
 <div id="res"></div>
 </div>
 <script>
@@ -103,8 +102,22 @@ const B=[
 ];
 const COR={excelencia:"#7FCDBB",atrair:"#C6E36B",nutrir:"#F28AC9",converter:"#F2D64B"};
 const OPS=[["2","Sim"],["1","Às vezes"],["0","Não"]];
-document.getElementById('nums').innerHTML=NUMS.map(([k,t])=>`<label class="n">${t}</label><input type="number" min="0" step="any" name="${k}" inputmode="decimal">`).join('');
-document.getElementById('blocos').innerHTML=B.map(b=>`<h2><span class="dot" style="background:${COR[b.id]}"></span>${b.nome}</h2><p class="nota">${b.sub}</p>`+b.q.map((q,i)=>`<div class="q"><p>${q[0]}</p><div class="op">${OPS.map(([v,l])=>`<label><input type="radio" name="${b.id}${i}" value="${v}" required><span>${l}</span></label>`).join('')}</div></div>`).join('')).join('');
+const C=[];
+C.push({t:"intro",h:`<div class="lb">Mentoria · Diagnóstico</div><h1>Onde estás a <em>perder clientes</em>?</h1><p>Responde com os números dos <b>últimos 3 meses</b> e com o que fazes na prática. No fim vês logo onde está o teu bloqueio, os teus próximos passos e a aula da EBS que explica cada um. Recebes também o resultado por email.</p><div class="nav"><button type="button" class="ok">Começar</button><small>demora 5 minutos</small></div>`});
+C.push({t:"txt",req:1,h:`<div class="lb">Quem és</div><p class="pq">Como te chamas?</p><input type="text" name="nome" autocomplete="name">`});
+C.push({t:"txt",req:1,email:1,h:`<div class="lb">Quem és</div><p class="pq">O teu email? Recebes lá o resultado.</p><input type="email" name="email" autocomplete="email">`});
+NUMS.forEach(([k,t])=>C.push({t:"num",h:`<div class="lb">Os teus números · últimos 3 meses</div><p class="pq">${t}</p><input type="number" min="0" step="any" name="${k}" inputmode="decimal" placeholder="Se não sabes, escreve o valor mais próximo">`}));
+B.forEach(b=>b.q.forEach((q,i)=>C.push({t:"op",h:`<div class="lb"><span class="dot" style="background:${COR[b.id]}"></span>${b.nome}</div><p class="pq">${q[0]}</p><div class="op">${OPS.map(([v,l])=>`<label><input type="radio" name="${b.id}${i}" value="${v}"><span>${l}</span></label>`).join('')}</div>`})));
+C.push({t:"fim",h:`<div class="lb">Pronto</div><p class="pq">Obrigada. Vamos ver onde está o teu bloqueio.</p><div class="nav"><button type="submit">Ver o meu diagnóstico</button></div>`});
+document.getElementById('cards').innerHTML=C.map((c,n)=>`<div class="card" data-n="${n}">${c.h}${(c.t==="intro"||c.t==="fim")?"":`<div class="err">Responde para continuar.</div><div class="nav"><button type="button" class="ok">OK</button><button type="button" class="vt">Voltar</button><small>ou carrega em Enter</small></div>`}</div>`).join('');
+let cur=0;const cards=[...document.querySelectorAll('.card')];
+function vai(n){cards[cur].classList.remove('on');cur=Math.max(0,Math.min(n,cards.length-1));cards[cur].classList.add('on');document.querySelector('#prog i').style.width=Math.round(cur/(cards.length-1)*100)+'%';const inp=cards[cur].querySelector('input[type=text],input[type=email],input[type=number]');if(inp)setTimeout(()=>inp.focus(),50);window.scrollTo(0,0)}
+function valido(){const c=C[cur],el=cards[cur];if(c.t==="txt"){const v=el.querySelector('input').value.trim();if(!v||(c.email&&!/^\S+@\S+\.\S+$/.test(v)))return false}if(c.t==="op"&&!el.querySelector('input:checked'))return false;return true}
+function seguinte(){if(!valido()){cards[cur].querySelector('.err').style.display='block';return}cards[cur].querySelector('.err')&&(cards[cur].querySelector('.err').style.display='none');vai(cur+1)}
+document.getElementById('cards').addEventListener('click',e=>{if(e.target.classList.contains('ok'))seguinte();if(e.target.classList.contains('vt'))vai(cur-1)});
+document.getElementById('cards').addEventListener('change',e=>{if(e.target.type==='radio')setTimeout(seguinte,250)});
+document.getElementById('f').addEventListener('keydown',e=>{if(e.key==='Enter'&&C[cur].t!=="fim"){e.preventDefault();seguinte()}});
+vai(0);
 
 const pct=(a,b)=>b>0?a/b:null, f=x=>x==null?"sem dados":Math.round(x*100)+" %";
 function calcula(d){
@@ -134,7 +147,7 @@ function mostra(d,r,enviado){
  ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
  <h3><span class="dot" style="background:${COR[r.bloq]}"></span>Os teus próximos passos</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
  <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
- document.getElementById('f').style.display='none';document.getElementById('intro').style.display='none';el.style.display='block';window.scrollTo(0,0);
+ document.getElementById('f').style.display='none';document.getElementById('prog').style.display='none';el.style.display='block';window.scrollTo(0,0);
 }
 document.getElementById('f').addEventListener('submit',async e=>{
  e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());const r=calcula(d);
