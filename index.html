@@ -21,10 +21,12 @@ input[type=number],input[type=text],input[type=email]{width:100%;font:inherit;pa
 .op label:has(input:checked){border-color:var(--preto);background:#F5F5F4}
 button{font:inherit;background:var(--preto);color:#fff;border:0;border-radius:6px;padding:16px 22px;width:100%;margin-top:28px;cursor:pointer}
 .bar{margin:10px 0}.bar .t{display:flex;justify-content:space-between;font-size:15px}.bar .b{height:10px;background:#EFEDEA;border-radius:5px;overflow:hidden}.bar .b i{display:block;height:100%;background:var(--preto)}
-.caixa{border-top:1px solid var(--preto);border-bottom:1px solid var(--preto);padding:18px 0;margin:24px 0}
+.caixa{border-left:6px solid var(--cor,#111);background:#FAFAF8;padding:16px 18px;margin:24px 0}
 .ac{border-bottom:1px solid var(--linha);padding:14px 0}.ac b{font-weight:500}.ac a{color:var(--preto)}
 .tx{font-size:15px;color:var(--cinza)}
 #res{display:none}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:10px;vertical-align:middle}.dot.big{width:22px;height:22px;margin-right:14px}
+.bar .b{height:14px}
 </style></head><body><div class="w">
 <img class="mono" src="mono.png" alt="Event Business School">
 <div id="intro"><div class="k" style="margin-top:22px">Mentoria · Diagnóstico</div>
@@ -99,9 +101,10 @@ const B=[
   ["Nenhum trabalho começa sem sinal.","Nenhum trabalho começa sem sinal e contrato.",["contrato"]],
   ["Tenho um tempo para vender todos os dias, mesmo nos meses cheios.","Uma hora de vendas por dia, mesmo nas semanas de eventos.",["rotina"]]]}
 ];
+const COR={excelencia:"#7FCDBB",atrair:"#C6E36B",nutrir:"#F28AC9",converter:"#F2D64B"};
 const OPS=[["2","Sim"],["1","Às vezes"],["0","Não"]];
 document.getElementById('nums').innerHTML=NUMS.map(([k,t])=>`<label class="n">${t}</label><input type="number" min="0" step="any" name="${k}" inputmode="decimal">`).join('');
-document.getElementById('blocos').innerHTML=B.map(b=>`<h2>${b.nome}</h2><p class="nota">${b.sub}</p>`+b.q.map((q,i)=>`<div class="q"><p>${q[0]}</p><div class="op">${OPS.map(([v,l])=>`<label><input type="radio" name="${b.id}${i}" value="${v}" required><span>${l}</span></label>`).join('')}</div></div>`).join('')).join('');
+document.getElementById('blocos').innerHTML=B.map(b=>`<h2><span class="dot" style="background:${COR[b.id]}"></span>${b.nome}</h2><p class="nota">${b.sub}</p>`+b.q.map((q,i)=>`<div class="q"><p>${q[0]}</p><div class="op">${OPS.map(([v,l])=>`<label><input type="radio" name="${b.id}${i}" value="${v}" required><span>${l}</span></label>`).join('')}</div></div>`).join('')).join('');
 
 const pct=(a,b)=>b>0?a/b:null, f=x=>x==null?"sem dados":Math.round(x*100)+" %";
 function calcula(d){
@@ -124,12 +127,12 @@ function mostra(d,r,enviado){
  const lk=a=>a.l.map(([t,u])=>`<a href="${u}" target="_blank">${t}</a>`).join(" · ");
  const el=document.getElementById('res');
  el.innerHTML=`<div class="k">O teu diagnóstico${d.nome?" · "+d.nome:""}</div>
- <h1>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p class="tx">As vendas são a consequência de quatro coisas: ser uma profissional de excelência, atrair, nutrir e converter.</p><p>${FRASE[r.bloq]}</p>
- ${["excelencia","atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%"></i></div></div>`).join("")}
+ <h1><span class="dot big" style="background:${COR[r.bloq]}"></span>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p class="tx">As vendas são a consequência de quatro coisas: ser uma profissional de excelência, atrair, nutrir e converter.</p><p>${FRASE[r.bloq]}</p>
+ ${["excelencia","atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span><span class="dot" style="background:${COR[k]}"></span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%;background:${COR[k]}"></i></div></div>`).join("")}
  <p class="tx">Os teus números: seguidores para conversas ${f(r.r1)} (referência 10 %) · conversas para reuniões ${f(r.r2)} (referência 30 %) · reuniões para clientes ${f(r.r3)} (referência 30 %).</p>
- <div class="caixa"><b>O passo que te está a faltar:</b> ${r.passo}</div>
+ <div class="caixa" style="--cor:${COR[r.bloq]}"><b>O passo que te está a faltar:</b> ${r.passo}</div>
  ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
- <h3>Os teus próximos passos</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
+ <h3><span class="dot" style="background:${COR[r.bloq]}"></span>Os teus próximos passos</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
  <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
  document.getElementById('f').style.display='none';document.getElementById('intro').style.display='none';el.style.display='block';window.scrollTo(0,0);
 }
