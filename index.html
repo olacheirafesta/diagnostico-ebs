@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnóstico do teu negócio · Event Business School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Red+Hat+Display:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--preto:#111110;--tinta:#1A1A19;--cinza:#6F6B63;--linha:#E2DED6}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--tinta);font:17px/1.65 "Red Hat Display",Arial,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:40px 18px 96px}
+.k{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--cinza)}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;font-weight:400;margin:0}
+h1{font-size:38px;line-height:1.1;margin:14px 0 10px}h2{font-size:26px;margin:44px 0 6px}h3{font-size:20px;margin:26px 0 6px}
+.nota{color:var(--cinza);font-size:15px}
+img.mono{width:56px;display:block}
+label.n{display:block;margin:16px 0 4px}
+input[type=number],input[type=text],input[type=email]{width:100%;font:inherit;padding:12px 14px;border:1px solid var(--linha);border-radius:6px}
+.q{border-top:1px solid var(--linha);padding:16px 0}
+.q p{margin:0 0 10px}
+.op{display:flex;gap:8px;flex-wrap:wrap}
+.op label{flex:1;min-width:90px;text-align:center;border:1px solid var(--linha);border-radius:6px;padding:10px 6px;cursor:pointer;font-size:15px}
+.op input{display:none}.op input:checked+span{font-weight:500}
+.op label:has(input:checked){border-color:var(--preto);background:#F5F5F4}
+button{font:inherit;background:var(--preto);color:#fff;border:0;border-radius:6px;padding:16px 22px;width:100%;margin-top:28px;cursor:pointer}
+.bar{margin:10px 0}.bar .t{display:flex;justify-content:space-between;font-size:15px}.bar .b{height:10px;background:#EFEDEA;border-radius:5px;overflow:hidden}.bar .b i{display:block;height:100%;background:var(--preto)}
+.caixa{border-top:1px solid var(--preto);border-bottom:1px solid var(--preto);padding:18px 0;margin:24px 0}
+.ac{border-bottom:1px solid var(--linha);padding:14px 0}.ac b{font-weight:500}.ac a{color:var(--preto)}
+.tx{font-size:15px;color:var(--cinza)}
+#res{display:none}
+</style></head><body><div class="w">
+<img class="mono" src="mono.png" alt="Event Business School">
+<div class="k" style="margin-top:22px">Mentoria · Diagnóstico</div>
+<h1>Onde estás a <em>perder clientes</em>?</h1>
+<p>Responde com os números dos <b>últimos 3 meses</b> e com o que fazes na prática. No fim vês onde está o teu bloqueio, as ações para esta semana e onde está a aula da EBS que explica cada uma.</p>
+
+<form id="f">
+<h2>Quem és</h2>
+<label class="n">O teu nome</label><input type="text" name="nome" required>
+<label class="n">O teu email (recebes lá o resultado)</label><input type="email" name="email" required>
+
+<h2>Os teus números</h2><p class="nota">Últimos 3 meses. Se não sabes ao certo, escreve o valor mais próximo.</p>
+<div id="nums"></div>
+
+<div id="blocos"></div>
+<button type="submit">Ver o meu diagnóstico</button>
+</form>
+
+<div id="res"></div>
+</div>
+<script>
+const EBS="https://clube-viver-de-eventos.circle.so/c/bloom/sections/", CODE="https://clube-viver-de-eventos.circle.so/c/code-f604b1/sections/";
+const L={
+ anuncios:["Masterclass Anúncios na prática",EBS+"1004410/lessons/4339334"],
+ metricas:["Masterclass Análise de Métricas de Anúncios",EBS+"1004410/lessons/4384337"],
+ conteudos:["Masterclass Sistema de Planeamento de Conteúdos",EBS+"1004410/lessons/4006990"],
+ chegar:["CODE · Como chegar a mais pessoas",CODE+"978821/lessons/3713560"],
+ historia:["CODE · Missão 7 · A tua História",CODE+"955389/lessons/3624057"],
+ promessa:["Masterclass A Minha Promessa & Mapa da Cliente™",EBS+"1004410/lessons/3870645"],
+ defconteudos:["CODE · Missão 8 · Define os teus Conteúdos",CODE+"955390/lessons/3624078"],
+ rotina:["Masterclass Rotina de Vendas",EBS+"1004410/lessons/4175283"],
+ guiao:["Guião Reunião de Vendas",EBS+"980653/lessons/3875011"],
+ reuniao:["CODE · Missão 9 · Reunião",CODE+"955391/lessons/3624086"],
+ objecoes:["CODE · Missão 9 · Objeções",CODE+"955391/lessons/3624088"],
+ proposta:["CODE · Missão 9 · Proposta",CODE+"955391/lessons/3624089"],
+ exproposta:["CODE · Exemplo de Proposta",CODE+"955299/lessons/3711919"],
+ contrato:["CODE · Missão 9 · Contrato",CODE+"955391/lessons/3624092"],
+ calc:["Calculadora do Preço Justo",EBS+"1004409/lessons/3661279"],
+ precojusto:["Workshop Preço Justo · Como calcular o Preço Justo",CODE+"955306/lessons/3620853"],
+ estrategia:["Uma Única Estratégia™",EBS+"980652/lessons/3911454"],
+ publico:["CODE · Missão 5 · O teu Público",CODE+"955362/lessons/3624001"]
+};
+const NUMS=[["seg","Quantos seguidores novos tiveste?"],["pedidos","Quantos pedidos de informação recebeste sem seres tu a procurar?"],["conv","Quantas conversas com potenciais clientes tiveste (começadas por ti ou por elas)?"],["reun","Quantas reuniões fizeste?"],["prop","Quantas propostas enviaste?"],["cli","Quantos eventos fechaste?"],["medio","Valor médio de cada evento fechado (€)"],["base","O teu preço base, só a organização (€)"]];
+const B=[
+ {id:"base",nome:"A base",sub:"Pesa nas três fases",q:[
+  ["Sei quanto preciso de faturar por mês para pagar o meu salário e os custos.","Faz as contas do teu Preço Justo: salário, custos e margem.",["calc"]],
+  ["Tenho um preço base e uso-o sempre, com espaço e catering à parte.","Decide o teu preço base e escreve-o numa frase.",["precojusto"]],
+  ["Consigo dizer numa frase para quem é o meu serviço.","Escreve numa frase quem é a tua cliente e que evento lhe vendes.",["estrategia","publico"]],
+  ["Recuso trabalhos que não são para mim ou que não pagam o meu preço.","Faz a lista do que já não aceitas e recusa com simpatia.",["estrategia"]]]},
+ {id:"atrair",nome:"Atrair",sub:"Estou a chegar a pessoas novas?",q:[
+  ["Publico pelo menos 3 vezes por semana.","Planeia 3 publicações por semana para o próximo mês.",["conteudos"]],
+  ["Tenho um anúncio sempre ativo, mesmo que pequeno.","Põe um anúncio pequeno no ar e não o desligues.",["anuncios","metricas"]],
+  ["Os meus posts mostram o tipo de evento que quero vender.","Publica só o tipo de evento que queres vender.",["conteudos"]],
+  ["Faço parcerias que me põem à frente de clientes novas (espaços, fornecedores, editoriais).","Escolhe 3 espaços ou fornecedores e propõe uma parceria esta semana.",["chegar"]]]},
+ {id:"nutrir",nome:"Nutrir",sub:"Quem me segue confia em mim e fala comigo?",q:[
+  ["Apareço nos stories pelo menos 3 vezes por semana: eu, a minha voz, os bastidores.","Três stories por semana contigo: a tua voz, os bastidores, quem és.",["historia"]],
+  ["Quem me segue sabe quem eu sou, não só o que faço.","Conta a tua história e porque fazes isto.",["historia","promessa"]],
+  ["Conto os meus eventos do início ao fim, com fotografias e testemunhos.","Conta o teu último evento em série: antes, durante, depois.",["defconteudos"]],
+  ["Mando mensagem a quem me segue, gosta ou comenta.","Todos os dias, uma mensagem a quem te segue, gosta ou comenta.",["rotina"]],
+  ["Os meus posts acabam com um convite para falar comigo.","Acaba cada publicação com um convite: manda-me mensagem.",["promessa"]]]},
+ {id:"converter",nome:"Converter",sub:"Quem fala comigo compra?",q:[
+  ["Em cada conversa proponho uma reunião antes de falar de valores.","Em cada conversa, propõe uma reunião antes de falar de valores.",["guiao"]],
+  ["Sigo um guião na reunião.","Usa o guião em todas as reuniões, passo a passo.",["guiao","reuniao"]],
+  ["Digo o preço na reunião, sem pedir desculpa e sem o baixar antes de mo pedirem.","Diz o preço na reunião e espera. Não o baixes antes de to pedirem.",["objecoes"]],
+  ["Envio a proposta até 30 minutos depois da reunião.","Tem a proposta pronta e envia-a até 30 minutos depois da reunião.",["proposta","exproposta"]],
+  ["Faço o seguimento em 48 horas, até 3 tentativas, e depois arquivo.","Seguimento em 48 horas, até 3 tentativas, depois arquiva.",["rotina"]],
+  ["Nenhum trabalho começa sem sinal.","Nenhum trabalho começa sem sinal e contrato.",["contrato"]],
+  ["Tenho um tempo para vender todos os dias, mesmo nos meses cheios.","Uma hora de vendas por dia, mesmo nas semanas de eventos.",["rotina"]]]}
+];
+const OPS=[["2","Sim"],["1","Às vezes"],["0","Não"]];
+document.getElementById('nums').innerHTML=NUMS.map(([k,t])=>`<label class="n">${t}</label><input type="number" min="0" step="any" name="${k}" inputmode="decimal">`).join('');
+document.getElementById('blocos').innerHTML=B.map(b=>`<h2>${b.nome}</h2><p class="nota">${b.sub}</p>`+b.q.map((q,i)=>`<div class="q"><p>${q[0]}</p><div class="op">${OPS.map(([v,l])=>`<label><input type="radio" name="${b.id}${i}" value="${v}" required><span>${l}</span></label>`).join('')}</div></div>`).join('')).join('');
+
+const pct=(a,b)=>b>0?a/b:null, f=x=>x==null?"sem dados":Math.round(x*100)+" %";
+function calcula(d){
+ const n=k=>d[k]===""||d[k]==null?null:Number(d[k]);
+ const r1=pct(n("conv"),n("seg")), r2=pct(n("reun"),n("conv")), r3=pct(n("cli"),n("reun"));
+ const h={};B.forEach(b=>{const v=b.q.map((q,i)=>Number(d[b.id+i]));h[b.id]={v,p:v.reduce((a,c)=>a+c,0)/(2*v.length)}});
+ const num={atrair:null,nutrir:r1==null?null:Math.min(r1/0.10,1),converter:[r2,r3].filter(x=>x!=null).length?Math.min(...[r2,r3].filter(x=>x!=null).map(x=>Math.min(x/0.30,1))):null};
+ const sc={};["atrair","nutrir","converter"].forEach(k=>sc[k]=num[k]==null?h[k].p:0.6*num[k]+0.4*h[k].p);
+ const bloq=Object.keys(sc).sort((a,b)=>sc[a]-sc[b])[0];
+ const blo=B.find(b=>b.id===bloq); const vv=h[bloq].v; const iMin=vv.indexOf(Math.min(...vv));
+ const acoes=[];blo.q.forEach((q,i)=>{if(vv[i]<2&&acoes.length<4)acoes.push({t:q[1],l:q[2].map(x=>L[x])})});
+ if(!acoes.length)acoes.push({t:blo.q[iMin][1],l:blo.q[iMin][2].map(x=>L[x])});
+ const antes=[];B[0].q.forEach((q,i)=>{if(h.base.v[i]<2&&antes.length<2)antes.push({t:q[1],l:q[2].map(x=>L[x])})});
+ const precoBaixo=n("medio")!=null&&n("base")!=null&&n("medio")<n("base");
+ return {r1,r2,r3,h,sc,bloq,nomeBloq:blo.nome,passo:blo.q[iMin][0],acoes,antes,precoBaixo};
+}
+const NOMES={atrair:"Atrair",nutrir:"Nutrir",converter:"Converter"};
+const FRASE={atrair:"Estás a chegar a poucas pessoas novas. Antes de tudo, é preciso mais gente a conhecer-te.",nutrir:"Há pessoas a seguir-te, mas poucas chegam a falar contigo. Falta confiança e convite.",converter:"Há conversas, mas não se transformam em reuniões e vendas. O bloqueio está na venda."};
+function mostra(d,r,enviado){
+ const lk=a=>a.l.map(([t,u])=>`<a href="${u}" target="_blank">${t}</a>`).join(" · ");
+ const el=document.getElementById('res');
+ el.innerHTML=`<div class="k">O teu diagnóstico${d.nome?" · "+d.nome:""}</div>
+ <h1>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p>${FRASE[r.bloq]}</p>
+ ${["atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%"></i></div></div>`).join("")}
+ <p class="tx">Os teus números: seguidores para conversas ${f(r.r1)} (referência 10 %) · conversas para reuniões ${f(r.r2)} (referência 30 %) · reuniões para clientes ${f(r.r3)} (referência 30 %).</p>
+ <div class="caixa"><b>O passo onde falhas:</b> ${r.passo}</div>
+ ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
+ <h3>As tuas ações para esta semana</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
+ <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
+ document.getElementById('f').style.display='none';el.style.display='block';window.scrollTo(0,0);
+}
+document.getElementById('f').addEventListener('submit',async e=>{
+ e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());const r=calcula(d);
+ const link=location.origin+location.pathname+"?r="+codifica(d);
+ mostra(d,r,true);
+ try{await fetch("https://ebs-webhooks.vercel.app/api/diagnostico",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({nome:d.nome,email:d.email,numeros:Object.fromEntries(NUMS.map(([k])=>[k,d[k]])),respostas:Object.fromEntries(Object.entries(d).filter(([k])=>!NUMS.some(n=>n[0]===k)&&k!=="nome"&&k!=="email")),taxas:{r1:r.r1,r2:r.r2,r3:r.r3},pontuacoes:r.sc,bloqueio:r.nomeBloq,passo:r.passo,acoes:r.acoes.map(a=>a.t),link,resumo:FRASE[r.bloq]})})}catch(x){}
+});
+function codifica(d){return NUMS.map(([k])=>d[k]||"").join(".")+"_"+B.map(b=>b.q.map((q,i)=>d[b.id+i]).join("")).join("")+"_"+encodeURIComponent((d.nome||"").split(" ")[0])}
+function descodifica(s){const [a,c,nm]=s.split("_");const d={nome:decodeURIComponent(nm||"")};a.split(".").forEach((v,i)=>d[NUMS[i][0]]=v);let j=0;B.forEach(b=>b.q.forEach((q,i)=>d[b.id+i]=c[j++]));return d}
+const q=new URLSearchParams(location.search).get("r");
+if(q){try{const d=descodifica(q);mostra(d,calcula(d),false)}catch(x){}}
+</script></body></html>
