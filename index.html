@@ -125,7 +125,7 @@ function mostra(d,r,enviado){
  <h1>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p class="tx">As vendas são a consequência de quatro coisas: ser uma profissional de excelência, atrair, nutrir e converter.</p><p>${FRASE[r.bloq]}</p>
  ${["excelencia","atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%"></i></div></div>`).join("")}
  <p class="tx">Os teus números: seguidores para conversas ${f(r.r1)} (referência 10 %) · conversas para reuniões ${f(r.r2)} (referência 30 %) · reuniões para clientes ${f(r.r3)} (referência 30 %).</p>
- <div class="caixa"><b>O passo onde falhas:</b> ${r.passo}</div>
+ <div class="caixa"><b>O passo que te está a faltar:</b> ${r.passo}</div>
  ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
  <h3>Os teus próximos passos</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
  <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
