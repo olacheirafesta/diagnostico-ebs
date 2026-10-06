@@ -65,15 +65,19 @@ const L={
  calc:["Calculadora do Preço Justo",EBS+"1004409/lessons/3661279"],
  precojusto:["Workshop Preço Justo · Como calcular o Preço Justo",CODE+"955306/lessons/3620853"],
  estrategia:["Uma Única Estratégia™",EBS+"980652/lessons/3911454"],
- publico:["CODE · Missão 5 · O teu Público",CODE+"955362/lessons/3624001"]
+ publico:["CODE · Missão 5 · O teu Público",CODE+"955362/lessons/3624001"],
+ planodia:["CODE · Missão 3 · Plano do dia",CODE+"955296/lessons/3620899"],
+ fornecedores:["CODE · Bónus · Script Fornecedores",CODE+"955296/lessons/3620913"]
 };
 const NUMS=[["seg","Quantos seguidores novos tiveste?"],["pedidos","Quantos pedidos de informação recebeste sem seres tu a procurar?"],["conv","Quantas conversas com potenciais clientes tiveste (começadas por ti ou por elas)?"],["reun","Quantas reuniões fizeste?"],["prop","Quantas propostas enviaste?"],["cli","Quantos eventos fechaste?"],["medio","Valor médio de cada evento fechado (€)"],["base","O teu preço base, só a organização (€)"]];
 const B=[
- {id:"base",nome:"A base",sub:"Pesa nas três fases",q:[
+ {id:"excelencia",nome:"Profissional de excelência",sub:"O trabalho que fazes e como o cobras",q:[
   ["Sei quanto preciso de faturar por mês para pagar o meu salário e os custos.","Faz as contas do teu Preço Justo: salário, custos e margem.",["calc"]],
   ["Tenho um preço base e uso-o sempre, com espaço e catering à parte.","Decide o teu preço base e escreve-o numa frase.",["precojusto"]],
   ["Consigo dizer numa frase para quem é o meu serviço.","Escreve numa frase quem é a tua cliente e que evento lhe vendes.",["estrategia","publico"]],
-  ["Recuso trabalhos que não são para mim ou que não pagam o meu preço.","Faz a lista do que já não aceitas e recusa com simpatia.",["estrategia"]]]},
+  ["Recuso trabalhos que não são para mim ou que não pagam o meu preço.","Faz a lista do que já não aceitas e recusa com simpatia.",["estrategia"]],
+  ["Cada evento tem plano do dia, fornecedores confirmados e contrato.","Usa sempre plano do dia, guião de fornecedores e contrato.",["planodia","fornecedores","contrato"]],
+  ["No fim de cada evento peço testemunho e fotografias.","No fim de cada evento, pede testemunho e fotografias.",["defconteudos"]]]},
  {id:"atrair",nome:"Atrair",sub:"Estou a chegar a pessoas novas?",q:[
   ["Publico pelo menos 3 vezes por semana.","Planeia 3 publicações por semana para o próximo mês.",["conteudos"]],
   ["Tenho um anúncio sempre ativo, mesmo que pequeno.","Põe um anúncio pequeno no ar e não o desligues.",["anuncios","metricas"]],
@@ -83,12 +87,11 @@ const B=[
   ["Apareço nos stories pelo menos 3 vezes por semana: eu, a minha voz, os bastidores.","Três stories por semana contigo: a tua voz, os bastidores, quem és.",["historia"]],
   ["Quem me segue sabe quem eu sou, não só o que faço.","Conta a tua história e porque fazes isto.",["historia","promessa"]],
   ["Conto os meus eventos do início ao fim, com fotografias e testemunhos.","Conta o teu último evento em série: antes, durante, depois.",["defconteudos"]],
-  ["Mando mensagem a quem me segue, gosta ou comenta.","Todos os dias, uma mensagem a quem te segue, gosta ou comenta.",["rotina"]],
   ["Os meus posts acabam com um convite para falar comigo.","Acaba cada publicação com um convite: manda-me mensagem.",["promessa"]]]},
- {id:"converter",nome:"Converter",sub:"Quem fala comigo compra?",q:[
+ {id:"converter",nome:"Converter",sub:"Mensagem, reunião, proposta, seguimento",q:[
+  ["Mando mensagem a quem me segue, gosta ou comenta.","Todos os dias, uma mensagem a quem te segue, gosta ou comenta.",["rotina"]],
   ["Em cada conversa proponho uma reunião antes de falar de valores.","Em cada conversa, propõe uma reunião antes de falar de valores.",["guiao"]],
-  ["Sigo um guião na reunião.","Usa o guião em todas as reuniões, passo a passo.",["guiao","reuniao"]],
-  ["Digo o preço na reunião, sem pedir desculpa e sem o baixar antes de mo pedirem.","Diz o preço na reunião e espera. Não o baixes antes de to pedirem.",["objecoes"]],
+  ["Sigo um guião na reunião e digo o preço lá dentro, sem o baixar antes de mo pedirem.","Usa o guião e diz o preço na reunião. Não o baixes antes de to pedirem.",["guiao","reuniao","objecoes"]],
   ["Envio a proposta até 30 minutos depois da reunião.","Tem a proposta pronta e envia-a até 30 minutos depois da reunião.",["proposta","exproposta"]],
   ["Faço o seguimento em 48 horas, até 3 tentativas, e depois arquivo.","Seguimento em 48 horas, até 3 tentativas, depois arquiva.",["rotina"]],
   ["Nenhum trabalho começa sem sinal.","Nenhum trabalho começa sem sinal e contrato.",["contrato"]],
@@ -104,27 +107,27 @@ function calcula(d){
  const r1=pct(n("conv"),n("seg")), r2=pct(n("reun"),n("conv")), r3=pct(n("cli"),n("reun"));
  const h={};B.forEach(b=>{const v=b.q.map((q,i)=>Number(d[b.id+i]));h[b.id]={v,p:v.reduce((a,c)=>a+c,0)/(2*v.length)}});
  const num={atrair:null,nutrir:r1==null?null:Math.min(r1/0.10,1),converter:[r2,r3].filter(x=>x!=null).length?Math.min(...[r2,r3].filter(x=>x!=null).map(x=>Math.min(x/0.30,1))):null};
- const sc={};["atrair","nutrir","converter"].forEach(k=>sc[k]=num[k]==null?h[k].p:0.6*num[k]+0.4*h[k].p);
+ const sc={excelencia:h.excelencia.p};["atrair","nutrir","converter"].forEach(k=>sc[k]=num[k]==null?h[k].p:0.6*num[k]+0.4*h[k].p);
  const bloq=Object.keys(sc).sort((a,b)=>sc[a]-sc[b])[0];
  const blo=B.find(b=>b.id===bloq); const vv=h[bloq].v; const iMin=vv.indexOf(Math.min(...vv));
  const acoes=[];blo.q.forEach((q,i)=>{if(vv[i]<2&&acoes.length<4)acoes.push({t:q[1],l:q[2].map(x=>L[x])})});
  if(!acoes.length)acoes.push({t:blo.q[iMin][1],l:blo.q[iMin][2].map(x=>L[x])});
- const antes=[];B[0].q.forEach((q,i)=>{if(h.base.v[i]<2&&antes.length<2)antes.push({t:q[1],l:q[2].map(x=>L[x])})});
+ const antes=[];if(bloq!=="excelencia")B[0].q.forEach((q,i)=>{if(h.excelencia.v[i]===0&&antes.length<2)antes.push({t:q[1],l:q[2].map(x=>L[x])})});
  const precoBaixo=n("medio")!=null&&n("base")!=null&&n("medio")<n("base");
  return {r1,r2,r3,h,sc,bloq,nomeBloq:blo.nome,passo:blo.q[iMin][0],acoes,antes,precoBaixo};
 }
-const NOMES={atrair:"Atrair",nutrir:"Nutrir",converter:"Converter"};
-const FRASE={atrair:"Estás a chegar a poucas pessoas novas. Antes de tudo, é preciso mais gente a conhecer-te.",nutrir:"Há pessoas a seguir-te, mas poucas chegam a falar contigo. Falta confiança e convite.",converter:"Há conversas, mas não se transformam em reuniões e vendas. O bloqueio está na venda."};
+const NOMES={excelencia:"Profissional de excelência",atrair:"Atrair",nutrir:"Nutrir",converter:"Converter"};
+const FRASE={excelencia:"Antes de vender mais, é preciso pôr a base em ordem: o teu preço, a tua cliente e a forma como trabalhas.",atrair:"Estás a chegar a poucas pessoas novas. Antes de tudo, é preciso mais gente a conhecer-te.",nutrir:"Há pessoas a seguir-te, mas poucas chegam a falar contigo. Falta confiança e convite.",converter:"Há conversas, mas não se transformam em reuniões e vendas. O bloqueio está na venda."};
 function mostra(d,r,enviado){
  const lk=a=>a.l.map(([t,u])=>`<a href="${u}" target="_blank">${t}</a>`).join(" · ");
  const el=document.getElementById('res');
  el.innerHTML=`<div class="k">O teu diagnóstico${d.nome?" · "+d.nome:""}</div>
- <h1>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p>${FRASE[r.bloq]}</p>
- ${["atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%"></i></div></div>`).join("")}
+ <h1>O teu bloqueio está em <em>${r.nomeBloq.toLowerCase()}</em></h1><p class="tx">As vendas são a consequência de quatro coisas: ser uma profissional de excelência, atrair, nutrir e converter.</p><p>${FRASE[r.bloq]}</p>
+ ${["excelencia","atrair","nutrir","converter"].map(k=>`<div class="bar"><div class="t"><span>${NOMES[k]}</span><span>${Math.round(r.sc[k]*100)} %</span></div><div class="b"><i style="width:${Math.round(r.sc[k]*100)}%"></i></div></div>`).join("")}
  <p class="tx">Os teus números: seguidores para conversas ${f(r.r1)} (referência 10 %) · conversas para reuniões ${f(r.r2)} (referência 30 %) · reuniões para clientes ${f(r.r3)} (referência 30 %).</p>
  <div class="caixa"><b>O passo onde falhas:</b> ${r.passo}</div>
  ${(r.antes.length||r.precoBaixo)?`<h3>Antes de vender, resolve</h3>${r.precoBaixo?`<div class="ac">O teu valor médio por evento está abaixo do teu preço base. <a href="${L.calc[1]}" target="_blank">${L.calc[0]}</a></div>`:""}${r.antes.map(a=>`<div class="ac"><b>${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}`:""}
- <h3>As tuas ações para esta semana</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
+ <h3>Os teus próximos passos</h3>${r.acoes.map((a,i)=>`<div class="ac"><b>${i+1}. ${a.t}</b><br><span class="tx">Na EBS: ${lk(a)}</span></div>`).join("")}
  <p class="nota" style="margin-top:26px">${enviado?"Enviámos-te este resultado por email.":""} Leva-o para a sessão: vamos trabalhar nele juntas.</p>`;
  document.getElementById('f').style.display='none';document.getElementById('intro').style.display='none';el.style.display='block';window.scrollTo(0,0);
 }
@@ -132,7 +135,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
  e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());const r=calcula(d);
  const link=location.origin+location.pathname+"?r="+codifica(d);
  mostra(d,r,true);
- try{await fetch("https://ebs-webhooks.vercel.app/api/quiz?tipo=diagnostico",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({nome:d.nome,email:d.email,numeros:Object.fromEntries(NUMS.map(([k])=>[k,d[k]])),respostas:Object.fromEntries(Object.entries(d).filter(([k])=>!NUMS.some(n=>n[0]===k)&&k!=="nome"&&k!=="email")),taxas:{r1:r.r1,r2:r.r2,r3:r.r3},pontuacoes:r.sc,bloqueio:r.nomeBloq,passo:r.passo,acoes:r.acoes.map(a=>a.t),link,resumo:FRASE[r.bloq]})})}catch(x){}
+ try{await fetch("https://ebs-webhooks.vercel.app/api/quiz?tipo=diagnostico",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({nome:d.nome,email:d.email,numeros:Object.fromEntries(NUMS.map(([k])=>[k,d[k]])),respostas:Object.fromEntries(Object.entries(d).filter(([k])=>!NUMS.some(n=>n[0]===k)&&k!=="nome"&&k!=="email")),taxas:{r1:r.r1,r2:r.r2,r3:r.r3},pontuacoes:r.sc,bloqueio:r.nomeBloq,passo:r.passo,acoes:r.acoes.map(a=>a.t),passos:r.acoes.map((a,i)=>(i+1)+". "+a.t+" (na EBS: "+a.l.map(x=>x[0]).join(" · ")+")").join("\n"),link,resumo:FRASE[r.bloq]})})}catch(x){}
 });
 function codifica(d){return NUMS.map(([k])=>d[k]||"").join(".")+"_"+B.map(b=>b.q.map((q,i)=>d[b.id+i]).join("")).join("")+"_"+encodeURIComponent((d.nome||"").split(" ")[0])}
 function descodifica(s){const [a,c,nm]=s.split("_");const d={nome:decodeURIComponent(nm||"")};a.split(".").forEach((v,i)=>d[NUMS[i][0]]=v);let j=0;B.forEach(b=>b.q.forEach((q,i)=>d[b.id+i]=c[j++]));return d}
