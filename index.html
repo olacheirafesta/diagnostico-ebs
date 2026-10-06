@@ -132,7 +132,7 @@ document.getElementById('f').addEventListener('submit',async e=>{
  e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());const r=calcula(d);
  const link=location.origin+location.pathname+"?r="+codifica(d);
  mostra(d,r,true);
- try{await fetch("https://ebs-webhooks.vercel.app/api/diagnostico",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({nome:d.nome,email:d.email,numeros:Object.fromEntries(NUMS.map(([k])=>[k,d[k]])),respostas:Object.fromEntries(Object.entries(d).filter(([k])=>!NUMS.some(n=>n[0]===k)&&k!=="nome"&&k!=="email")),taxas:{r1:r.r1,r2:r.r2,r3:r.r3},pontuacoes:r.sc,bloqueio:r.nomeBloq,passo:r.passo,acoes:r.acoes.map(a=>a.t),link,resumo:FRASE[r.bloq]})})}catch(x){}
+ try{await fetch("https://ebs-webhooks.vercel.app/api/quiz?tipo=diagnostico",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({nome:d.nome,email:d.email,numeros:Object.fromEntries(NUMS.map(([k])=>[k,d[k]])),respostas:Object.fromEntries(Object.entries(d).filter(([k])=>!NUMS.some(n=>n[0]===k)&&k!=="nome"&&k!=="email")),taxas:{r1:r.r1,r2:r.r2,r3:r.r3},pontuacoes:r.sc,bloqueio:r.nomeBloq,passo:r.passo,acoes:r.acoes.map(a=>a.t),link,resumo:FRASE[r.bloq]})})}catch(x){}
 });
 function codifica(d){return NUMS.map(([k])=>d[k]||"").join(".")+"_"+B.map(b=>b.q.map((q,i)=>d[b.id+i]).join("")).join("")+"_"+encodeURIComponent((d.nome||"").split(" ")[0])}
 function descodifica(s){const [a,c,nm]=s.split("_");const d={nome:decodeURIComponent(nm||"")};a.split(".").forEach((v,i)=>d[NUMS[i][0]]=v);let j=0;B.forEach(b=>b.q.forEach((q,i)=>d[b.id+i]=c[j++]));return d}
